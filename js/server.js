@@ -118,6 +118,33 @@ function Server(config, callback) {
 		html = html.replace("#VERSION#", global.version);
 
 		let configFile = "config/config.js";
+
+		console.log(configFile);
+
+		if (typeof global.configuration_file !== "undefined") {
+			configFile = global.configuration_file;
+		}
+		html = html.replace("#CONFIG_FILE#", configFile);
+
+		res.send(html);
+	});
+
+	app.get("/update", function (req, res) {
+		let html = fs.readFileSync(path.resolve(`${global.root_path}/index.html`), { encoding: "utf8" });
+		html = html.replace("#VERSION#", global.version);
+
+		config.modules[3].header = "Prazniki ZDA AA";
+
+		const file = JSON.stringify(config, null, 2);
+
+		const fileReplace = "let config = " + file + ";if (typeof module !== 'undefined') {module.exports = config;}"
+
+		fs.writeFile('config/config.js', fileReplace, err => {
+			if(err) console.log(err);
+		})
+
+		let configFile = "config/config.js";
+
 		if (typeof global.configuration_file !== "undefined") {
 			configFile = global.configuration_file;
 		}
